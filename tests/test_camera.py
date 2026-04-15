@@ -183,14 +183,16 @@ async def test_async_camera_siren(async_home):
     ) as mock_resp:
         assert await module.async_siren_on()
         mock_resp.assert_awaited_with(
-            params=gen_json_data("sound"),
             endpoint="api/setstate",
+            base_url="https://app.netatmo.net/",
+            params=gen_json_data("sound"),
         )
 
         assert await module.async_siren_off()
         mock_resp.assert_awaited_with(
-            params=gen_json_data("no_sound"),
             endpoint="api/setstate",
+            base_url="https://app.netatmo.net/",
+            params=gen_json_data("no_sound"),
         )
 
 

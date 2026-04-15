@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any
 
 from aiohttp import ClientConnectorError, ClientResponse
 
-from pyatmo.const import GETMEASURE_ENDPOINT, RawData
+from pyatmo.const import GETMEASURE_ENDPOINT, SETSTATE_ENDPOINT, SIREN_BASE_URL, RawData
 from pyatmo.exceptions import ApiError
 from pyatmo.modules.base_class import EntityBase, NetatmoBase, Place, update_name
 from pyatmo.modules.device_types import (
@@ -589,15 +589,24 @@ class SirenMixin(EntityBase):
     async def async_set_siren_state(self, state: str) -> bool:
         """Set siren state."""
 
-        json_siren_state = {
-            "modules": [
-                {
-                    "id": self.entity_id,
-                    "siren_status": state,
+        resp = await self.home.auth.async_post_api_request(
+            endpoint=SETSTATE_ENDPOINT,
+            base_url=SIREN_BASE_URL,
+            params={
+                "json": {
+                    "home": {
+                        "id": self.home.entity_id,
+                        "modules": [
+                            {
+                                "id": self.entity_id,
+                                "siren_status": state,
+                            },
+                        ],
+                    },
                 },
-            ],
-        }
-        return await self.home.async_set_state(json_siren_state)
+            },
+        )
+        return (await resp.json()).get("status") == "ok"
 
     async def async_siren_on(self) -> bool:
         """Turn on siren."""

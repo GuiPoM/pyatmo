@@ -19,6 +19,7 @@ ERRORS: dict[int, str] = {
 RawData = dict[str, Any]
 
 DEFAULT_BASE_URL: str = "https://api.netatmo.com/"
+SIREN_BASE_URL: str = "https://app.netatmo.net/"
 
 # Endpoints
 AUTH_REQ_ENDPOINT = "oauth2/token"
